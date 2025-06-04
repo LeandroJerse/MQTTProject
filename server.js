@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const Aedes = require('aedes');
 const cors = require('cors');
-
+ 
 const app = express();
 const aedes = Aedes();
 const mqttServer = require('net').createServer(aedes.handle);
@@ -29,6 +29,13 @@ catch (error) {
   
 });
 
+app.post('/echo', (req, res) => {
+    const {email,senha} = req.body;
+    console.log(`Email: ${email}, Senha: ${senha}`);
+    res.send(req.body);
+}
+);
+
 aedes.on('client', (client) => {
   console.log(`Client connected: ${client.id}`);
 });
@@ -44,6 +51,13 @@ aedes.on('publish', (packet, client) => {
     console.log(`Message from broker: ${packet.payload.toString()}`);
   }
 });
+
+//aedes.on('publish', async function (packet, client) {
+//    console.log('Client \x1b[31m' + (client ? client.id : 'BROKER_') + '\x1b[0m published', packet.payload.toString(), 'on' , packet.topic, 'to broker', aedes.id);
+    
+//})
+
+
 
 app.get('/', (req, res) => {
   res.send('Welcome to the MQTT server');
